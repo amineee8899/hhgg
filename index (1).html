@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Message Sender</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; }
+        .container { background: #f8f9fa; padding: 20px; border-radius: 8px; }
+        textarea { width: 100%; padding: 8px; margin: 10px 0; height: 100px; }
+        button { background: #28a745; color: white; padding: 12px 24px; border: none; cursor: pointer; }
+        .response { margin-top: 15px; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Secure Message Sender</h2>
+        
+        <label>Message:</label>
+        <textarea id="messageInput"></textarea>
+        
+        <button onclick="sendMessage()">Send Securely</button>
+        
+        <div id="response" class="response"></div>
+    </div>
+
+    <script>
+    const API_SECRET = '7519759442:AAEuCj_NqypvQ57z73pUE7sGdIq98UAQtoc'; // Same as in .env file
+
+    async function sendMessage() {
+        const message = document.getElementById('messageInput').value.trim();
+        const responseDiv = document.getElementById('response');
+
+        if (!message) {
+            showResponse('Please enter a message', 'red');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_SECRET}`
+                },
+                body: JSON.stringify({ message })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                showResponse(`Message sent successfully! ID: ${result.message_id}`, 'green');
+            } else {
+                showResponse(`Error: ${result.error}`, 'red');
+            }
+        } catch (error) {
+            showResponse('Connection failed', 'red');
+        }
+    }
+
+    function showResponse(text, color) {
+        const div = document.getElementById('response');
+        div.style.color = color;
+        div.textContent = text;
+    }
+    </script>
+</body>
+</html>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
